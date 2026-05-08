@@ -1,0 +1,886 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Reroute — v2 hero pass</title>
+<meta name="viewport" content="width=1640" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;500;600;700;800&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary:#7C6FCD; --primary-light:#A99FE0; --primary-dark:#5D52A8;
+  --bg:#1A1828; --bg-page:#0F0E1A;
+  --surface:#252140; --surface-alt:#2E2A4A;
+  --text:#E8E4F0; --text-2:#9B97B0; --text-3:#6A6680;
+  --border:#3A3658;
+  --cream:#F4ECDF; --warm:#C9A57E; --rose:#E0A4A4;
+  --success:#7DD3A6; --warning:#F4A261;
+  --light-bg:#F5F0EB; --light-surface:#FFFFFF; --light-text:#1C1C2E; --light-text-2:#6B6880; --light-border:#E2DDD8;
+}
+html,body{margin:0;padding:0;background:var(--bg-page);color:var(--text);font-family:'Nunito',system-ui,sans-serif;-webkit-font-smoothing:antialiased;}
+.page{width:1640px;margin:0 auto;padding:88px 80px 160px;box-sizing:border-box;}
+.intro{display:grid;grid-template-columns:auto 1fr;gap:48px;align-items:end;border-bottom:1px solid #2a2640;padding-bottom:36px;margin-bottom:64px;}
+.intro h1{margin:0;font-family:'Fraunces',serif;font-weight:400;font-size:56px;letter-spacing:-0.03em;line-height:1.05;color:var(--cream);}
+.intro h1 em{font-style:italic;color:var(--primary-light);}
+.intro p{margin:14px 0 0;font-family:'DM Sans';font-size:15px;color:var(--text-2);max-width:620px;line-height:1.6;}
+.intro .num{font-family:'DM Sans';font-size:13px;letter-spacing:0.2em;color:var(--primary-light);text-transform:uppercase;}
+.intro .badge{margin-top:8px;display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border-radius:999px;background:rgba(244,236,223,0.06);border:1px solid rgba(244,236,223,0.18);font-family:'DM Sans';font-size:12px;color:var(--cream);}
+
+.row{display:flex;flex-wrap:wrap;gap:48px 36px;}
+.row.tight{gap:32px 24px;}
+
+.cell{display:flex;flex-direction:column;gap:18px;width:375px;}
+.cell.wide{width:792px;}
+.cap{display:flex;align-items:baseline;gap:10px;padding-left:4px;}
+.cap .n{font-family:'Fraunces',serif;font-size:22px;font-weight:500;letter-spacing:-0.02em;color:var(--primary-light);font-feature-settings:"tnum";}
+.cap .t{font-family:'Nunito';font-weight:600;font-size:15px;color:var(--text);}
+.cap .s{font-family:'DM Sans';font-size:12px;color:var(--text-3);}
+
+.note{margin-top:6px;font-family:'DM Sans';font-size:12px;color:var(--text-3);line-height:1.55;padding-left:4px;max-width:340px;}
+.note b{color:var(--cream);font-weight:500;}
+
+/* phone */
+.phone{width:375px;height:812px;border-radius:48px;background:var(--bg);overflow:hidden;position:relative;display:flex;flex-direction:column;isolation:isolate;
+  box-shadow:0 0 0 8px #0a0916, 0 0 0 9px #2a2640, 0 30px 60px -20px rgba(0,0,0,0.6), 0 8px 24px -8px rgba(124,111,205,0.18);}
+.phone.light{background:var(--light-bg);color:var(--light-text);}
+.status{height:44px;padding:0 28px;display:flex;align-items:center;justify-content:space-between;font-family:'DM Sans';font-weight:600;font-size:15px;color:var(--text);position:relative;z-index:5;flex:0 0 auto;}
+.phone.light .status{color:var(--light-text);}
+.status .notch{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:120px;height:26px;background:#050410;border-radius:14px;}
+.phone.light .status .notch{background:#1C1C2E;}
+.status .icons{display:flex;gap:6px;}
+.home{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:134px;height:5px;border-radius:3px;background:rgba(232,228,240,0.4);z-index:50;}
+.phone.light .home{background:rgba(28,28,46,0.35);}
+
+.body{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;}
+
+/* grain */
+.grain::after{content:'';position:absolute;inset:0;pointer-events:none;opacity:0.07;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 0.95  0 0 0 0 0.85  0 0 0 0.5 0'/></filter><rect width='160' height='160' filter='url(%23n)'/></svg>");}
+
+/* ───────── SPLASH ───────── */
+.s-splash{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 38%, rgba(169,159,224,0.45) 0%, rgba(124,111,205,0.18) 35%, rgba(124,111,205,0) 65%),
+    radial-gradient(ellipse 90% 40% at 50% 75%, rgba(244,236,223,0.10) 0%, rgba(244,236,223,0) 60%),
+    var(--bg);
+  overflow:hidden;padding-bottom:80px;}
+.aurora{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:560px;height:560px;pointer-events:none;}
+.aurora circle{fill:none;stroke:rgba(169,159,224,0.25);stroke-width:1;animation:breathe 4.5s ease-in-out infinite;transform-origin:center;}
+.aurora circle:nth-child(2){stroke-dasharray:2 6;stroke:rgba(244,236,223,0.18);animation-delay:0.6s;}
+.aurora circle:nth-child(3){animation-delay:1.2s;stroke:rgba(124,111,205,0.18);}
+@keyframes breathe{0%,100%{opacity:.35;transform:scale(1);}50%{opacity:.85;transform:scale(1.05);}}
+.splash-mark{width:108px;height:108px;border-radius:30px;display:grid;place-items:center;position:relative;z-index:2;
+  background:radial-gradient(circle at 32% 28%, #C7BEEC 0%, #7C6FCD 55%, #4A3F8E 100%);
+  box-shadow:0 24px 60px -16px rgba(124,111,205,0.7), inset 0 1px 0 rgba(255,255,255,0.2);}
+.splash-name{position:relative;z-index:2;font-family:'Fraunces',serif;font-weight:400;font-size:48px;letter-spacing:-0.025em;color:var(--cream);margin:24px 0 6px;}
+.splash-name em{font-style:italic;color:var(--primary-light);}
+.splash-tag{position:relative;z-index:2;font-family:'DM Sans';font-size:14px;color:var(--text-2);letter-spacing:0.04em;text-transform:uppercase;}
+.splash-pulse{position:absolute;bottom:120px;left:50%;transform:translateX(-50%);display:flex;gap:8px;}
+.splash-pulse i{width:5px;height:5px;border-radius:999px;background:rgba(169,159,224,0.6);animation:dot 1.4s ease-in-out infinite;}
+.splash-pulse i:nth-child(2){animation-delay:0.2s;} .splash-pulse i:nth-child(3){animation-delay:0.4s;}
+@keyframes dot{0%,80%,100%{opacity:.3;transform:scale(0.6);}40%{opacity:1;transform:scale(1.2);}}
+
+/* ───────── ACTIVE SESSION ───────── */
+.s-active{flex:1;position:relative;display:flex;flex-direction:column;
+  background:radial-gradient(ellipse 80% 50% at 50% 30%, rgba(124,111,205,0.22) 0%, rgba(124,111,205,0) 60%), var(--bg);
+  overflow:hidden;}
+.session-bar{padding:16px 28px 0;display:flex;justify-content:space-between;align-items:center;}
+.session-bar .live{display:inline-flex;gap:8px;align-items:center;font-family:'DM Sans';font-size:12px;color:var(--primary-light);letter-spacing:0.08em;text-transform:uppercase;}
+.session-bar .live::before{content:'';width:6px;height:6px;border-radius:999px;background:var(--primary-light);box-shadow:0 0 12px var(--primary-light);animation:pulse2 1.6s ease-in-out infinite;}
+@keyframes pulse2{0%,100%{opacity:0.5;}50%{opacity:1;}}
+.session-bar .schedule{font-family:'DM Sans';font-size:12px;color:var(--text-3);font-feature-settings:'tnum';}
+
+.aura{flex:1;display:flex;align-items:center;justify-content:center;position:relative;}
+.aura-svg{width:340px;height:340px;}
+.aura-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:280px;height:280px;border-radius:50%;
+  background:radial-gradient(circle, rgba(124,111,205,0.35) 0%, rgba(124,111,205,0) 60%);
+  filter:blur(20px);animation:auraBreathe 6s ease-in-out infinite;}
+@keyframes auraBreathe{0%,100%{transform:translate(-50%,-50%) scale(1);opacity:.6;}50%{transform:translate(-50%,-50%) scale(1.1);opacity:1;}}
+.aura-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;width:240px;}
+.aura-center .lab{font-family:'DM Sans';font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--primary-light);}
+.aura-center .num{font-family:'Fraunces',serif;font-weight:300;font-size:88px;line-height:1;letter-spacing:-0.04em;color:var(--cream);font-feature-settings:'tnum';margin-top:2px;}
+.aura-center .task{font-family:'Fraunces',serif;font-style:italic;font-weight:400;font-size:16px;color:var(--text-2);margin-top:8px;line-height:1.35;}
+
+.way-back{margin:0 28px 16px;padding:18px 22px;border-radius:22px;
+  background:linear-gradient(180deg, rgba(244,236,223,0.10) 0%, rgba(244,236,223,0.03) 100%);
+  border:1px solid rgba(244,236,223,0.18);}
+.way-back .lab{font-family:'DM Sans';font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--cream);opacity:0.7;}
+.way-back .body-q{font-family:'Fraunces',serif;font-style:italic;font-weight:400;font-size:18px;color:var(--cream);line-height:1.4;margin-top:6px;}
+
+.session-actions{padding:0 28px 28px;display:grid;grid-template-columns:1fr auto auto;gap:10px;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:56px;border-radius:18px;font-family:'Nunito';font-weight:600;font-size:15px;border:none;padding:0 18px;cursor:default;}
+.btn-drift{background:rgba(244,162,97,0.1);color:#F0B084;border:1px solid rgba(244,162,97,0.25);font-weight:600;}
+.btn-circle{width:56px;height:56px;border-radius:50%;background:rgba(58,54,88,0.5);color:var(--text);display:grid;place-items:center;border:1px solid rgba(58,54,88,0.7);}
+.btn-primary{background:var(--primary);color:#fff;box-shadow:0 8px 20px -8px rgba(124,111,205,0.55);}
+.btn-secondary{background:var(--surface-alt);color:var(--text);border:1px solid rgba(58,54,88,0.7);}
+.btn-block{display:flex;width:100%;}
+
+/* ───────── DRIFT REROUTE ───────── */
+.s-drift{flex:1;position:relative;display:flex;flex-direction:column;
+  background:
+    radial-gradient(ellipse 100% 60% at 50% 110%, rgba(169,159,224,0.25) 0%, rgba(124,111,205,0) 55%),
+    radial-gradient(ellipse 80% 40% at 50% -10%, rgba(244,236,223,0.10) 0%, rgba(244,236,223,0) 55%),
+    var(--bg);
+  overflow:hidden;padding-top:8px;}
+.drift-glyph{position:relative;height:160px;display:flex;align-items:center;justify-content:center;margin-top:8px;}
+.drift-path{position:absolute;}
+.drift-path circle{animation:floaty 4s ease-in-out infinite;}
+@keyframes floaty{0%,100%{transform:translateY(0);}50%{transform:translateY(-4px);}}
+
+.drift-content{padding:0 28px;display:flex;flex-direction:column;gap:20px;flex:1;overflow:hidden;}
+.drift-h{font-family:'Fraunces',serif;font-weight:400;font-size:30px;letter-spacing:-0.02em;line-height:1.15;color:var(--cream);margin:8px 0 0;}
+.drift-h em{font-style:italic;}
+.drift-sub{font-family:'DM Sans';font-size:14px;color:var(--text-2);line-height:1.55;margin:0;}
+
+.intent-card{padding:18px 20px;border-radius:22px;
+  background:linear-gradient(135deg, rgba(124,111,205,0.18) 0%, rgba(124,111,205,0.04) 100%);
+  border:1px solid rgba(169,159,224,0.28);position:relative;overflow:hidden;}
+.intent-card::after{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;
+  background:radial-gradient(circle, rgba(169,159,224,0.2) 0%, rgba(169,159,224,0) 70%);}
+.intent-card .lab{font-family:'DM Sans';font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--primary-light);}
+.intent-card .task{font-family:'Nunito';font-weight:600;font-size:17px;color:var(--text);margin-top:6px;line-height:1.35;}
+.intent-card .way{font-family:'Fraunces',serif;font-style:italic;font-size:14px;color:var(--text-2);margin-top:14px;padding-top:14px;border-top:1px solid rgba(169,159,224,0.18);line-height:1.4;}
+
+.lab2{font-family:'DM Sans';font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-3);padding-left:4px;}
+.chips{display:flex;flex-wrap:wrap;gap:8px;}
+.chip{padding:9px 14px;border-radius:999px;background:rgba(46,42,74,0.7);color:var(--text);font-family:'DM Sans';font-size:13px;font-weight:500;border:1px solid transparent;display:inline-flex;align-items:center;gap:6px;}
+.chip.on{background:rgba(124,111,205,0.18);border-color:rgba(169,159,224,0.5);color:var(--primary-light);}
+
+.drift-actions{margin-top:auto;padding:0 0 24px;display:flex;flex-direction:column;gap:8px;}
+
+/* ───────── END SESSION ───────── */
+.s-end{flex:1;position:relative;display:flex;flex-direction:column;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(244,236,223,0.14) 0%, rgba(244,236,223,0) 55%),
+    radial-gradient(ellipse 80% 60% at 50% 110%, rgba(124,111,205,0.18) 0%, rgba(124,111,205,0) 60%),
+    var(--bg);
+  overflow:hidden;}
+.end-hero{padding:32px 28px 4px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;}
+.end-mark{width:88px;height:88px;border-radius:24px;display:grid;place-items:center;position:relative;
+  background:radial-gradient(circle at 30% 30%, #F4ECDF 0%, #C9A57E 100%);
+  box-shadow:0 16px 40px -12px rgba(201,165,126,0.5);}
+.end-mark::before{content:'';position:absolute;inset:-12px;border-radius:30px;border:1px dashed rgba(201,165,126,0.4);animation:rot 18s linear infinite;}
+@keyframes rot{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.end-h{font-family:'Fraunces',serif;font-weight:400;font-size:32px;letter-spacing:-0.02em;color:var(--cream);margin:0;line-height:1.1;}
+.end-h em{font-style:italic;color:var(--warm);}
+.end-meta{font-family:'DM Sans';font-size:13px;color:var(--text-2);}
+.end-meta b{color:var(--text);font-weight:600;}
+
+.timeline{margin:24px 28px 0;padding:18px 20px;border-radius:22px;background:rgba(37,33,64,0.6);border:1px solid rgba(58,54,88,0.6);}
+.timeline .lab{font-family:'DM Sans';font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--text-3);margin-bottom:12px;}
+.tl-track{position:relative;height:42px;background:linear-gradient(90deg, rgba(124,111,205,0.18) 0%, rgba(124,111,205,0.4) 100%);border-radius:10px;overflow:hidden;}
+.tl-track .focus{position:absolute;inset:0;background:linear-gradient(180deg, var(--primary-light) 0%, var(--primary) 100%);border-radius:10px;}
+.tl-track .gap{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(45deg, rgba(244,162,97,0.4) 0 4px, rgba(244,162,97,0.2) 4px 8px);}
+.tl-track .reroute{position:absolute;top:50%;transform:translateY(-50%);width:14px;height:14px;border-radius:50%;background:var(--cream);border:2px solid var(--bg);box-shadow:0 0 0 1px var(--cream);}
+.tl-axis{display:flex;justify-content:space-between;margin-top:8px;font-family:'DM Sans';font-size:10px;color:var(--text-3);font-feature-settings:'tnum';}
+.tl-legend{display:flex;gap:14px;margin-top:14px;font-family:'DM Sans';font-size:11px;color:var(--text-2);}
+.tl-legend i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:6px;vertical-align:middle;}
+
+.end-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:rgba(58,54,88,0.5);margin:16px 28px;border-radius:18px;overflow:hidden;border:1px solid rgba(58,54,88,0.6);}
+.end-stat{background:var(--surface);padding:18px 12px;text-align:center;display:flex;flex-direction:column;gap:4px;align-items:center;}
+.end-stat .v{font-family:'Fraunces',serif;font-weight:300;font-size:32px;line-height:1;letter-spacing:-0.03em;color:var(--cream);font-feature-settings:'tnum';}
+.end-stat .v.lav{color:var(--primary-light);}
+.end-stat .l{font-family:'DM Sans';font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--text-3);}
+
+.end-quote{margin:16px 28px;padding:20px 22px;border-radius:22px;background:rgba(244,236,223,0.06);border:1px solid rgba(244,236,223,0.18);}
+.end-quote .body-q{font-family:'Fraunces',serif;font-style:italic;font-weight:400;font-size:18px;line-height:1.4;color:var(--cream);}
+
+.end-actions{margin:auto 28px 24px;display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-top:14px;}
+
+/* ───────── DEMO BLOCKING ───────── */
+.s-block{flex:1;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:48px 28px 80px;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 30%, rgba(124,111,205,0.45) 0%, rgba(124,111,205,0) 55%),
+    radial-gradient(ellipse 80% 50% at 50% 110%, rgba(244,236,223,0.10) 0%, rgba(244,236,223,0) 55%),
+    var(--bg);
+  overflow:hidden;}
+.block-brand{position:absolute;top:60px;left:50%;transform:translateX(-50%);display:inline-flex;align-items:center;gap:10px;padding:8px 16px 8px 8px;border-radius:999px;
+  background:rgba(124,111,205,0.18);border:1px solid rgba(169,159,224,0.4);backdrop-filter:blur(12px);}
+.block-brand .m{width:28px;height:28px;border-radius:9px;background:linear-gradient(135deg,#C7BEEC 0%,#5D52A8 100%);display:grid;place-items:center;color:#fff;}
+.block-brand span{font-family:'Fraunces',serif;font-weight:500;font-size:14px;color:var(--primary-light);letter-spacing:0.02em;}
+
+.app-paused{position:relative;display:flex;flex-direction:column;align-items:center;gap:14px;margin-bottom:14px;}
+.app-icon{width:88px;height:88px;border-radius:24px;display:grid;place-items:center;color:#fff;font-family:'Nunito';font-weight:800;font-size:38px;
+  background:#C13584;box-shadow:0 16px 40px -12px rgba(193,53,132,0.5);position:relative;}
+.app-icon::after{content:'';position:absolute;inset:-2px;border-radius:26px;background:rgba(15,14,26,0.55);}
+.app-icon::before{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:2;width:36px;height:36px;border-radius:50%;background:var(--bg);display:grid;place-items:center;
+  box-shadow:0 0 0 4px rgba(15,14,26,0.6);background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%23E8E4F0' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><rect x='4' y='11' width='16' height='10' rx='2'/><path d='M8 11V7a4 4 0 1 1 8 0v4'/></svg>");background-size:20px;background-repeat:no-repeat;background-position:center;}
+.app-paused .lab{font-family:'DM Sans';font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--text-3);}
+.app-paused .lab b{color:var(--text-2);font-weight:600;}
+
+.block-h{font-family:'Fraunces',serif;font-weight:400;font-size:32px;letter-spacing:-0.02em;line-height:1.15;color:var(--cream);margin:8px auto 0;max-width:280px;}
+.block-h em{font-style:italic;}
+
+.block-route{margin-top:18px;padding:16px 20px;border-radius:20px;background:rgba(124,111,205,0.14);border:1px solid rgba(169,159,224,0.32);max-width:300px;text-align:left;backdrop-filter:blur(8px);}
+.block-route .lab{font-family:'DM Sans';font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--primary-light);}
+.block-route .task{font-family:'Nunito';font-weight:600;font-size:16px;margin-top:4px;color:var(--text);}
+.block-route .way{font-family:'Fraunces',serif;font-style:italic;font-size:13px;color:var(--text-2);margin-top:10px;padding-top:10px;border-top:1px solid rgba(169,159,224,0.18);}
+
+.block-actions{margin-top:auto;width:100%;max-width:320px;display:flex;flex-direction:column;gap:8px;}
+.block-meta{font-family:'DM Sans';font-size:11px;color:var(--text-3);font-feature-settings:'tnum';margin-top:4px;}
+
+/* ───────── LIGHT-MODE PAIR ───────── */
+.s-light-home{flex:1;display:flex;flex-direction:column;background:linear-gradient(180deg,#FAF6F1 0%, #F5F0EB 100%);}
+.s-light-home .nav{padding:16px 24px 8px;display:flex;justify-content:space-between;align-items:center;}
+.s-light-home .nav .greet{font-family:'Fraunces',serif;font-style:italic;font-weight:400;font-size:14px;color:var(--light-text-2);}
+.s-light-home .nav .av{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#C7BEEC,#7C6FCD);}
+.s-light-home .scroll{flex:1;padding:8px 24px 24px;display:flex;flex-direction:column;gap:18px;overflow:hidden;}
+.s-light-home h1{font-family:'Fraunces',serif;font-weight:400;font-size:30px;letter-spacing:-0.02em;color:var(--light-text);margin:0;line-height:1.15;}
+.s-light-home h1 em{font-style:italic;color:var(--primary-dark);}
+.l-route{padding:22px;border-radius:24px;background:linear-gradient(135deg, #FFF 0%, #F8F3ED 100%);border:1px solid #E8E1D7;box-shadow:0 4px 14px -8px rgba(28,28,46,0.08);position:relative;overflow:hidden;}
+.l-route::before{content:'';position:absolute;top:-40px;right:-40px;width:140px;height:140px;border-radius:50%;background:radial-gradient(circle, rgba(124,111,205,0.12) 0%, rgba(124,111,205,0) 70%);}
+.l-route .lab{font-family:'DM Sans';font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--primary);position:relative;}
+.l-route .t{font-family:'Fraunces',serif;font-weight:400;font-size:22px;line-height:1.25;color:var(--light-text);margin-top:8px;letter-spacing:-0.01em;position:relative;}
+.l-route .meta{display:flex;gap:8px;margin-top:14px;position:relative;}
+.l-pill{padding:5px 11px;border-radius:999px;background:rgba(124,111,205,0.1);color:var(--primary-dark);font-family:'DM Sans';font-size:11px;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;}
+.l-pill.cream{background:rgba(201,165,126,0.18);color:#8a6940;}
+.l-cta{padding:18px 22px;border-radius:18px;background:var(--primary);color:#fff;font-family:'Nunito';font-weight:600;font-size:16px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 8px 20px -8px rgba(124,111,205,0.4);}
+.l-cta-2{padding:18px 22px;border-radius:18px;background:#fff;border:1px solid #E8E1D7;color:var(--light-text);font-family:'Nunito';font-weight:600;font-size:16px;display:flex;justify-content:space-between;align-items:center;}
+.l-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1px;background:#E8E1D7;border-radius:20px;overflow:hidden;border:1px solid #E8E1D7;}
+.l-stat{background:#fff;padding:18px 14px;display:flex;flex-direction:column;gap:4px;align-items:center;text-align:center;}
+.l-stat .v{font-family:'Fraunces',serif;font-weight:400;font-size:30px;line-height:1;color:var(--light-text);font-feature-settings:'tnum';}
+.l-stat .l{font-family:'DM Sans';font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:var(--light-text-2);}
+.l-insight{padding:18px 20px;border-radius:20px;background:linear-gradient(135deg, #F4ECDF 0%, #EDE3D2 100%);border:1px solid #DCD0BB;display:flex;gap:14px;align-items:flex-start;}
+.l-leaf{width:34px;height:34px;border-radius:10px;background:rgba(124,111,205,0.12);color:var(--primary-dark);display:grid;place-items:center;flex:0 0 34px;}
+
+/* ───────── SIGNATURE: Reroute curve ───────── */
+.signature{position:absolute;pointer-events:none;}
+.signature path{fill:none;stroke-linecap:round;}
+.sig-divider{height:1px;background:linear-gradient(90deg, transparent 0%, rgba(169,159,224,0.4) 50%, transparent 100%);margin:12px 0;}
+
+/* annotated callouts */
+.callout{position:absolute;font-family:'DM Sans';font-size:12px;color:var(--cream);line-height:1.5;max-width:200px;pointer-events:none;}
+.callout::before{content:'';position:absolute;width:32px;height:32px;}
+.callout-line{stroke:rgba(244,236,223,0.4);stroke-width:1;stroke-dasharray:3 3;fill:none;}
+
+.with-callouts{position:relative;}
+
+/* small icons inline */
+.ico{width:18px;height:18px;display:inline-block;vertical-align:middle;}
+
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header class="intro">
+    <div>
+      <span class="num">v2 · hero pass</span>
+      <h1>Where you <em>come back</em><br/>matters more than where you went.</h1>
+      <p>A second pass on Reroute focused on the five hero moments — splash, active session, the drift / reroute screen, end-of-session debrief, and the demo blocking overlay — plus a pair of light-mode home shots. New display serif for warmth, signature breathing aurora, and a session timeline that reframes drifts as data rather than failures.</p>
+    </div>
+    <div style="text-align:right;">
+      <span class="badge">↩ <span style="color:var(--text-2)">v1 carries the system, v2 carries the soul</span></span>
+    </div>
+  </header>
+
+  <!-- ═══════ HERO 1 — SPLASH ═══════ -->
+  <section style="margin-bottom:88px;">
+    <div class="cap" style="margin-bottom:24px;"><span class="n">01</span><span class="t">Splash &amp; first contact</span><span class="s">— the breathing aurora</span></div>
+    <div class="row">
+      <div class="cell">
+        <div class="phone">
+          <div class="status">
+            <div class="notch"></div>
+            <span>9:41</span>
+            <span class="icons">
+              <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="0.6"/><rect x="4.4" y="5" width="3" height="6" rx="0.6"/><rect x="8.8" y="2.5" width="3" height="8.5" rx="0.6"/><rect x="13.2" y="0" width="3" height="11" rx="0.6"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><path d="M8 2.6c2.2 0 4.2.9 5.6 2.3l1-1A8.8 8.8 0 0 0 8 1a8.8 8.8 0 0 0-6.6 2.9l1 1A7.7 7.7 0 0 1 8 2.6z"/><path d="M8 6.1c1.3 0 2.4.5 3.3 1.4l1-1A6.3 6.3 0 0 0 8 4.6a6.3 6.3 0 0 0-4.3 1.9l1 1A4.5 4.5 0 0 1 8 6.1z"/><circle cx="8" cy="9.4" r="1.3"/></svg>
+              <svg width="25" height="11" viewBox="0 0 25 11" fill="none"><rect x="0.5" y="0.5" width="21" height="10" rx="2.5" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="18" height="7" rx="1.4" fill="currentColor"/><path d="M23 4v3c.7-.3 1.2-1 1.2-1.5 0-.5-.5-1.2-1.2-1.5z" fill="currentColor" opacity="0.5"/></svg>
+            </span>
+          </div>
+          <div class="body grain">
+            <div class="s-splash">
+              <svg class="aurora" viewBox="0 0 560 560">
+                <circle cx="280" cy="280" r="120"/>
+                <circle cx="280" cy="280" r="190"/>
+                <circle cx="280" cy="280" r="260"/>
+              </svg>
+              <div class="splash-mark">
+                <svg width="46" height="46" viewBox="0 0 24 24" fill="none">
+                  <path d="M3 12c0-4.97 4.03-9 9-9 2.5 0 4.76 1.02 6.4 2.66M21 12c0 4.97-4.03 9-9 9-2.5 0-4.76-1.02-6.4-2.66" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/>
+                  <path d="M19 3v4h-4M5 21v-4h4" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <h1 class="splash-name">Re<em>route</em></h1>
+              <div class="splash-tag">Find your way back</div>
+              <div class="splash-pulse"><i></i><i></i><i></i></div>
+            </div>
+          </div>
+          <div class="home"></div>
+        </div>
+        <div class="cap"><span class="n">01</span><span class="t">Splash</span><span class="s">— launch</span></div>
+        <p class="note">Three concentric rings <b>breathe in unison</b> — the rhythm signals "this app slows you down". Display serif "Reroute" with the route in italic places the brand as a verb. Cream pulse dots replace the spinner.</p>
+      </div>
+
+      <div class="cell" style="justify-content:flex-start;align-self:flex-start;width:600px;padding-top:40px;">
+        <h3 style="font-family:'Fraunces',serif;font-weight:400;font-size:28px;letter-spacing:-0.02em;color:var(--cream);margin:0;line-height:1.2;">Why the splash is doing more work now</h3>
+        <p style="font-family:'DM Sans';font-size:14px;color:var(--text-2);line-height:1.7;margin:14px 0 0;">
+          The first second sets a tone. v1 was a wordmark on a flat field; v2 is a small <em style="color:var(--cream);font-style:italic;">scene</em> — three rings expanding and contracting at 4.5s, the cadence of a slow exhale. The mark is a glassy violet pebble, not a flat tile. The italic <em style="color:var(--primary-light);font-style:italic;">"route"</em> hints at the verb the user is about to do.
+        </p>
+        <div style="margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+          <div style="padding:16px;border-radius:14px;background:rgba(244,236,223,0.04);border:1px solid rgba(244,236,223,0.12);">
+            <div style="font-family:'DM Sans';font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--cream);opacity:0.7;">Signature</div>
+            <div style="font-family:'Nunito';font-weight:600;font-size:14px;margin-top:6px;color:var(--text);">Breathing aurora</div>
+            <p style="font-family:'DM Sans';font-size:12px;color:var(--text-2);margin:6px 0 0;line-height:1.55;">Three rings, 4.5s cycle. Reused on Active Session and Demo Block.</p>
+          </div>
+          <div style="padding:16px;border-radius:14px;background:rgba(244,236,223,0.04);border:1px solid rgba(244,236,223,0.12);">
+            <div style="font-family:'DM Sans';font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--cream);opacity:0.7;">Type</div>
+            <div style="font-family:'Nunito';font-weight:600;font-size:14px;margin-top:6px;color:var(--text);">Fraunces — display only</div>
+            <p style="font-family:'DM Sans';font-size:12px;color:var(--text-2);margin:6px 0 0;line-height:1.55;">Used at hero size with italics for emotional moments. Body stays Nunito/DM Sans.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ HERO 2 — ACTIVE SESSION ═══════ -->
+  <section style="margin-bottom:88px;">
+    <div class="cap" style="margin-bottom:24px;"><span class="n">02</span><span class="t">Active session</span><span class="s">— the meditative timer, redesigned</span></div>
+    <div class="row">
+      <div class="cell">
+        <div class="phone">
+          <div class="status">
+            <div class="notch"></div>
+            <span>9:41</span>
+            <span class="icons">
+              <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="0.6"/><rect x="4.4" y="5" width="3" height="6" rx="0.6"/><rect x="8.8" y="2.5" width="3" height="8.5" rx="0.6"/><rect x="13.2" y="0" width="3" height="11" rx="0.6"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><path d="M8 2.6c2.2 0 4.2.9 5.6 2.3l1-1A8.8 8.8 0 0 0 8 1a8.8 8.8 0 0 0-6.6 2.9l1 1A7.7 7.7 0 0 1 8 2.6z"/><path d="M8 6.1c1.3 0 2.4.5 3.3 1.4l1-1A6.3 6.3 0 0 0 8 4.6a6.3 6.3 0 0 0-4.3 1.9l1 1A4.5 4.5 0 0 1 8 6.1z"/><circle cx="8" cy="9.4" r="1.3"/></svg>
+              <svg width="25" height="11" viewBox="0 0 25 11" fill="none"><rect x="0.5" y="0.5" width="21" height="10" rx="2.5" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="18" height="7" rx="1.4" fill="currentColor"/><path d="M23 4v3c.7-.3 1.2-1 1.2-1.5 0-.5-.5-1.2-1.2-1.5z" fill="currentColor" opacity="0.5"/></svg>
+            </span>
+          </div>
+          <div class="body grain">
+            <div class="s-active">
+              <div class="session-bar">
+                <span class="live">Focus session</span>
+                <span class="schedule">9:41 → 10:26</span>
+              </div>
+              <div class="aura">
+                <div class="aura-glow"></div>
+                <svg class="aura-svg" viewBox="0 0 340 340">
+                  <!-- outer breathing rings -->
+                  <circle cx="170" cy="170" r="160" fill="none" stroke="rgba(169,159,224,0.12)" stroke-width="1"/>
+                  <circle cx="170" cy="170" r="140" fill="none" stroke="rgba(169,159,224,0.18)" stroke-width="1" stroke-dasharray="2 6"/>
+                  <!-- progress ring -->
+                  <circle cx="170" cy="170" r="120" fill="none" stroke="rgba(58,54,88,0.5)" stroke-width="2"/>
+                  <circle cx="170" cy="170" r="120" fill="none" stroke="url(#g2)" stroke-width="3"
+                    stroke-dasharray="753.98" stroke-dashoffset="437.31" stroke-linecap="round"
+                    transform="rotate(-90 170 170)"/>
+                  <!-- reroute marks on ring (where user came back) -->
+                  <g transform="rotate(-90 170 170)">
+                    <circle cx="170" cy="50" r="4" fill="#F4ECDF" transform="rotate(60 170 170)"/>
+                    <circle cx="170" cy="50" r="4" fill="#F4ECDF" transform="rotate(110 170 170)"/>
+                    <circle cx="170" cy="50" r="4" fill="#F4ECDF" transform="rotate(140 170 170)"/>
+                  </g>
+                  <defs>
+                    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stop-color="#A99FE0"/>
+                      <stop offset="100%" stop-color="#7C6FCD"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <div class="aura-center">
+                  <span class="lab">26 of 45 min remain</span>
+                  <div class="num">26:14</div>
+                  <div class="task">"Finish design proposal — section 2"</div>
+                </div>
+              </div>
+              <div class="way-back">
+                <div class="lab">Your way back</div>
+                <div class="body-q">Open the document and write one sentence.</div>
+              </div>
+              <div class="session-actions">
+                <button class="btn btn-drift">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 9v4M12 17h.01"/><circle cx="12" cy="12" r="9"/></svg>
+                  I drifted
+                </button>
+                <button class="btn-circle">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 5v14M16 5v14"/></svg>
+                </button>
+                <button class="btn-circle">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="home"></div>
+        </div>
+        <div class="cap"><span class="n">09</span><span class="t">Active Session</span><span class="s">— breathing aura</span></div>
+        <p class="note">Cream marks on the ring are <b>past reroutes in this session</b>, not failures — moments of return. The "I drifted" button is warm-amber, not red. Pause/end shrink to circle controls so they don't compete with the timer.</p>
+      </div>
+
+      <div class="cell" style="width:600px;align-self:flex-start;padding-top:32px;">
+        <h3 style="font-family:'Fraunces',serif;font-weight:400;font-size:26px;letter-spacing:-0.02em;color:var(--cream);margin:0;line-height:1.2;">The ring is now a <em style="font-style:italic;color:var(--primary-light);">return record</em></h3>
+        <p style="font-family:'DM Sans';font-size:14px;color:var(--text-2);line-height:1.7;margin:14px 0 0;">
+          A standard countdown ring measures one thing: time elapsed. Reroute's unique metric is <em style="color:var(--cream);font-style:italic;">times rerouted</em> — so the ring carries both. The progress arc shows time. The cream dots are reroutes, plotted at the moment they happened. By the end of a session you have a small visual record of how often you came back.
+        </p>
+        <div style="margin-top:22px;padding:18px;border-radius:14px;background:rgba(244,236,223,0.04);border:1px solid rgba(244,236,223,0.12);">
+          <div style="font-family:'DM Sans';font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--cream);opacity:0.7;">Tone shift</div>
+          <p style="font-family:'Fraunces',serif;font-style:italic;font-size:18px;color:var(--cream);margin:8px 0 0;line-height:1.4;">"You drifted" stops being a notification and becomes a <span style="color:var(--warm);">data point you can see</span>.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ HERO 3 — DRIFT REROUTE ═══════ -->
+  <section style="margin-bottom:88px;">
+    <div class="cap" style="margin-bottom:24px;"><span class="n">03</span><span class="t">Drift / Reroute</span><span class="s">— the most important screen in the product</span></div>
+    <div class="row">
+      <div class="cell">
+        <div class="phone">
+          <div class="status">
+            <div class="notch"></div>
+            <span>9:41</span>
+            <span class="icons">
+              <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="0.6"/><rect x="4.4" y="5" width="3" height="6" rx="0.6"/><rect x="8.8" y="2.5" width="3" height="8.5" rx="0.6"/><rect x="13.2" y="0" width="3" height="11" rx="0.6"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><path d="M8 2.6c2.2 0 4.2.9 5.6 2.3l1-1A8.8 8.8 0 0 0 8 1a8.8 8.8 0 0 0-6.6 2.9l1 1A7.7 7.7 0 0 1 8 2.6z"/><path d="M8 6.1c1.3 0 2.4.5 3.3 1.4l1-1A6.3 6.3 0 0 0 8 4.6a6.3 6.3 0 0 0-4.3 1.9l1 1A4.5 4.5 0 0 1 8 6.1z"/><circle cx="8" cy="9.4" r="1.3"/></svg>
+              <svg width="25" height="11" viewBox="0 0 25 11" fill="none"><rect x="0.5" y="0.5" width="21" height="10" rx="2.5" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="18" height="7" rx="1.4" fill="currentColor"/><path d="M23 4v3c.7-.3 1.2-1 1.2-1.5 0-.5-.5-1.2-1.2-1.5z" fill="currentColor" opacity="0.5"/></svg>
+            </span>
+          </div>
+          <div class="body grain">
+            <div class="s-drift">
+              <div style="display:flex;justify-content:space-between;padding:12px 24px 4px;">
+                <div style="width:38px;height:38px;border-radius:12px;background:rgba(58,54,88,0.5);display:grid;place-items:center;color:var(--text);">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </div>
+                <div></div>
+                <div></div>
+              </div>
+
+              <!-- Signature curving path -->
+              <div class="drift-glyph">
+                <svg class="drift-path" width="320" height="160" viewBox="0 0 320 160">
+                  <defs>
+                    <linearGradient id="drift-g" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stop-color="#A99FE0" stop-opacity="0.2"/>
+                      <stop offset="50%" stop-color="#A99FE0" stop-opacity="1"/>
+                      <stop offset="100%" stop-color="#F4ECDF" stop-opacity="1"/>
+                    </linearGradient>
+                  </defs>
+                  <!-- the drift -->
+                  <path d="M30 80 Q 80 80, 120 50 T 210 110" stroke="rgba(244,162,97,0.5)" stroke-width="2" stroke-dasharray="4 4" fill="none" stroke-linecap="round"/>
+                  <!-- the reroute (back to path) -->
+                  <path d="M210 110 Q 250 110, 270 80" stroke="url(#drift-g)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                  <!-- start node -->
+                  <circle cx="30" cy="80" r="5" fill="#A99FE0"/>
+                  <circle cx="30" cy="80" r="9" fill="none" stroke="rgba(169,159,224,0.4)" stroke-width="1"/>
+                  <!-- drift apex -->
+                  <circle cx="120" cy="50" r="4" fill="rgba(244,162,97,0.7)"/>
+                  <!-- moment of "I drifted" -->
+                  <circle cx="210" cy="110" r="6" fill="#F4A261"/>
+                  <circle cx="210" cy="110" r="14" fill="none" stroke="rgba(244,162,97,0.4)" stroke-width="1" stroke-dasharray="2 3"/>
+                  <!-- end (back on track) -->
+                  <circle cx="270" cy="80" r="6" fill="#F4ECDF"/>
+                  <circle cx="270" cy="80" r="11" fill="none" stroke="rgba(244,236,223,0.4)" stroke-width="1"/>
+                </svg>
+              </div>
+
+              <div class="drift-content">
+                <h1 class="drift-h">It happens. Let's <em>get back</em>.</h1>
+                <p class="drift-sub">Naming what pulled you helps Reroute help you better next time. No need to be precise.</p>
+
+                <div class="intent-card">
+                  <div class="lab">You were working on</div>
+                  <div class="task">Finish design proposal — section 2.</div>
+                  <div class="way">"Open the document and write one sentence."</div>
+                </div>
+
+                <div>
+                  <div class="lab2" style="margin-bottom:10px;">What pulled you?</div>
+                  <div class="chips">
+                    <span class="chip on">
+                      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+                      Social media
+                    </span>
+                    <span class="chip">Email</span>
+                    <span class="chip">Phone call</span>
+                    <span class="chip">News</span>
+                    <span class="chip">Boredom</span>
+                    <span class="chip">Other</span>
+                  </div>
+                </div>
+
+                <div class="drift-actions">
+                  <button class="btn btn-primary btn-block" style="height:58px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 12c0-4.97 4.03-9 9-9 2.5 0 4.76 1.02 6.4 2.66M21 12c0 4.97-4.03 9-9 9-2.5 0-4.76-1.02-6.4-2.66"/><path d="M19 3v4h-4M5 21v-4h4"/></svg>
+                    Get back on track
+                  </button>
+                  <button class="btn btn-block" style="background:transparent;color:var(--text-2);height:48px;font-weight:500;font-size:14px;">Take a 5-minute break instead</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="home"></div>
+        </div>
+        <div class="cap"><span class="n">10</span><span class="t">Drift / Reroute</span><span class="s">— core moment</span></div>
+        <p class="note">A small <b>route diagram</b> tells the whole story: you were on a path, you drifted off (orange), this is where we are now (the orange ring), and we're guiding you to a calm cream node. The diagram is the metaphor — the metaphor is the brand.</p>
+      </div>
+
+      <div class="cell" style="width:600px;align-self:flex-start;padding-top:32px;">
+        <h3 style="font-family:'Fraunces',serif;font-weight:400;font-size:26px;letter-spacing:-0.02em;color:var(--cream);margin:0;line-height:1.2;">The path glyph is the soul of the app</h3>
+        <p style="font-family:'DM Sans';font-size:14px;color:var(--text-2);line-height:1.7;margin:14px 0 0;">
+          Most "you got distracted" screens use a stop-sign or a red barrier. Reroute uses a road — you start on the line, drift off it, and the screen visualises the small curve back. The orange dot is <em style="color:var(--cream);font-style:italic;">where you are right now</em>, the cream dot is <em style="color:var(--cream);font-style:italic;">where the path picks back up</em>. The dashed line is the way back.
+        </p>
+        <div style="margin-top:22px;padding:18px;border-radius:14px;background:linear-gradient(135deg,rgba(124,111,205,0.14) 0%,rgba(124,111,205,0.02) 100%);border:1px solid rgba(169,159,224,0.28);">
+          <div style="font-family:'DM Sans';font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--primary-light);">Copy decisions</div>
+          <ul style="font-family:'DM Sans';font-size:13px;color:var(--text-2);margin:10px 0 0;padding:0 0 0 18px;line-height:1.7;">
+            <li><em style="color:var(--cream);font-style:italic;">"It happens"</em> — opens with normalising, not addressing</li>
+            <li><em style="color:var(--cream);font-style:italic;">"Let's get back"</em> — first-person plural, you're not alone</li>
+            <li><em style="color:var(--cream);font-style:italic;">"What pulled you?"</em> — agency lives in the verb (the app didn't pull, the user wasn't dragged)</li>
+            <li>The chip <em style="color:var(--cream);font-style:italic;">"Take a 5-minute break instead"</em> sits below the primary — leaving is also a valid choice, just framed.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ HERO 4 — END SESSION ═══════ -->
+  <section style="margin-bottom:88px;">
+    <div class="cap" style="margin-bottom:24px;"><span class="n">04</span><span class="t">End of session</span><span class="s">— the timeline turns drifts into shape</span></div>
+    <div class="row">
+      <div class="cell">
+        <div class="phone">
+          <div class="status">
+            <div class="notch"></div>
+            <span>9:41</span>
+            <span class="icons">
+              <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="0.6"/><rect x="4.4" y="5" width="3" height="6" rx="0.6"/><rect x="8.8" y="2.5" width="3" height="8.5" rx="0.6"/><rect x="13.2" y="0" width="3" height="11" rx="0.6"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><path d="M8 2.6c2.2 0 4.2.9 5.6 2.3l1-1A8.8 8.8 0 0 0 8 1a8.8 8.8 0 0 0-6.6 2.9l1 1A7.7 7.7 0 0 1 8 2.6z"/><path d="M8 6.1c1.3 0 2.4.5 3.3 1.4l1-1A6.3 6.3 0 0 0 8 4.6a6.3 6.3 0 0 0-4.3 1.9l1 1A4.5 4.5 0 0 1 8 6.1z"/><circle cx="8" cy="9.4" r="1.3"/></svg>
+              <svg width="25" height="11" viewBox="0 0 25 11" fill="none"><rect x="0.5" y="0.5" width="21" height="10" rx="2.5" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="18" height="7" rx="1.4" fill="currentColor"/><path d="M23 4v3c.7-.3 1.2-1 1.2-1.5 0-.5-.5-1.2-1.2-1.5z" fill="currentColor" opacity="0.5"/></svg>
+            </span>
+          </div>
+          <div class="body grain">
+            <div class="s-end">
+              <div class="end-hero">
+                <div class="end-mark">
+                  <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#5D52A8" stroke-width="2.4" stroke-linecap="round"><path d="M12 3l1.9 4 4.4.7-3.2 3.1.7 4.4L12 13l-3.8 2.2.7-4.4L5.7 7.7 10.1 7z" fill="#5D52A8"/></svg>
+                </div>
+                <h1 class="end-h">You came back. <em>That counts.</em></h1>
+                <div class="end-meta">45-minute session on <b>Finish design proposal</b></div>
+              </div>
+
+              <div class="timeline">
+                <div class="lab">Your session shape</div>
+                <div class="tl-track">
+                  <div class="focus" style="left:0;width:24%;"></div>
+                  <div class="gap" style="left:24%;width:6%;"></div>
+                  <div class="focus" style="left:30%;width:25%;"></div>
+                  <div class="gap" style="left:55%;width:8%;"></div>
+                  <div class="focus" style="left:63%;width:20%;"></div>
+                  <div class="gap" style="left:83%;width:4%;"></div>
+                  <div class="focus" style="left:87%;width:13%;"></div>
+                  <!-- reroute markers -->
+                  <div class="reroute" style="left:30%;"></div>
+                  <div class="reroute" style="left:63%;"></div>
+                  <div class="reroute" style="left:87%;"></div>
+                </div>
+                <div class="tl-axis">
+                  <span>0:00</span><span>15:00</span><span>30:00</span><span>45:00</span>
+                </div>
+                <div class="tl-legend">
+                  <span><i style="background:linear-gradient(180deg,#A99FE0,#7C6FCD);"></i> Focused (38m)</span>
+                  <span><i style="background:repeating-linear-gradient(45deg,rgba(244,162,97,0.5) 0 3px,rgba(244,162,97,0.2) 3px 6px);"></i> Drifted (7m)</span>
+                  <span style="color:var(--cream);"><i style="background:#F4ECDF;border-radius:50%;"></i> Returned ×3</span>
+                </div>
+              </div>
+
+              <div class="end-stats">
+                <div class="end-stat"><div class="v">38<span style="font-size:18px;color:var(--text-2);font-family:'DM Sans';">m</span></div><div class="l">Focused</div></div>
+                <div class="end-stat"><div class="v lav">3</div><div class="l">Reroutes</div></div>
+                <div class="end-stat"><div class="v">85<span style="font-size:18px;color:var(--text-2);font-family:'DM Sans';">%</span></div><div class="l">On task</div></div>
+              </div>
+
+              <div class="end-quote">
+                <div class="body-q">"You drifted, and you came back — three times. That's a skill, not a failure."</div>
+              </div>
+
+              <div class="end-actions">
+                <button class="btn btn-primary">Start another</button>
+                <button class="btn btn-secondary">Done</button>
+              </div>
+            </div>
+          </div>
+          <div class="home"></div>
+        </div>
+        <div class="cap"><span class="n">12</span><span class="t">End Session</span><span class="s">— the session shape</span></div>
+        <p class="note">A <b>session shape</b> is the headline. Violet bars are focus, hatched amber is drift, cream dots are returns. The user instantly sees: I drifted three times, and I came back three times. The number of returns is what they earned.</p>
+      </div>
+
+      <div class="cell" style="width:600px;align-self:flex-start;padding-top:32px;">
+        <h3 style="font-family:'Fraunces',serif;font-weight:400;font-size:26px;letter-spacing:-0.02em;color:var(--cream);margin:0;line-height:1.2;">Reframe the metric, reframe the feeling</h3>
+        <p style="font-family:'DM Sans';font-size:14px;color:var(--text-2);line-height:1.7;margin:14px 0 0;">
+          The temptation at end-of-session is the <em style="font-style:italic;">"focus score"</em> — a single number that grades you. Reroute refuses. Instead the timeline tells the whole story: every drift is visible, but so is every return. The cream dots (returns) are the brightest object on the screen, by design.
+        </p>
+        <div style="margin-top:22px;display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div style="padding:16px;border-radius:14px;background:rgba(244,236,223,0.04);border:1px solid rgba(244,236,223,0.12);">
+            <div style="font-family:'DM Sans';font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--cream);opacity:0.7;">v1</div>
+            <p style="font-family:'DM Sans';font-size:13px;color:var(--text-2);margin:6px 0 0;line-height:1.55;">Stat grid + insight card. Felt like a dashboard.</p>
+          </div>
+          <div style="padding:16px;border-radius:14px;background:linear-gradient(135deg,rgba(244,236,223,0.10) 0%,rgba(244,236,223,0.02) 100%);border:1px solid rgba(244,236,223,0.22);">
+            <div style="font-family:'DM Sans';font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--cream);">v2</div>
+            <p style="font-family:'DM Sans';font-size:13px;color:var(--cream);margin:6px 0 0;line-height:1.55;">Story timeline + serif quote. Feels like a journal entry.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ HERO 5 — DEMO BLOCKING ═══════ -->
+  <section style="margin-bottom:88px;">
+    <div class="cap" style="margin-bottom:24px;"><span class="n">05</span><span class="t">Demo blocking overlay</span><span class="s">— the moment of intercept</span></div>
+    <div class="row">
+      <div class="cell">
+        <div class="phone">
+          <div class="status">
+            <div class="notch"></div>
+            <span>9:41</span>
+            <span class="icons">
+              <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="0.6"/><rect x="4.4" y="5" width="3" height="6" rx="0.6"/><rect x="8.8" y="2.5" width="3" height="8.5" rx="0.6"/><rect x="13.2" y="0" width="3" height="11" rx="0.6"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><path d="M8 2.6c2.2 0 4.2.9 5.6 2.3l1-1A8.8 8.8 0 0 0 8 1a8.8 8.8 0 0 0-6.6 2.9l1 1A7.7 7.7 0 0 1 8 2.6z"/><path d="M8 6.1c1.3 0 2.4.5 3.3 1.4l1-1A6.3 6.3 0 0 0 8 4.6a6.3 6.3 0 0 0-4.3 1.9l1 1A4.5 4.5 0 0 1 8 6.1z"/><circle cx="8" cy="9.4" r="1.3"/></svg>
+              <svg width="25" height="11" viewBox="0 0 25 11" fill="none"><rect x="0.5" y="0.5" width="21" height="10" rx="2.5" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="18" height="7" rx="1.4" fill="currentColor"/><path d="M23 4v3c.7-.3 1.2-1 1.2-1.5 0-.5-.5-1.2-1.2-1.5z" fill="currentColor" opacity="0.5"/></svg>
+            </span>
+          </div>
+          <div class="body grain">
+            <div class="s-block">
+              <div class="block-brand">
+                <div class="m"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M3 12c0-4.97 4.03-9 9-9 2.5 0 4.76 1.02 6.4 2.66M21 12c0 4.97-4.03 9-9 9-2.5 0-4.76-1.02-6.4-2.66" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/><path d="M19 3v4h-4M5 21v-4h4" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg></div>
+                <span>Reroute paused this</span>
+              </div>
+
+              <div class="app-paused">
+                <div class="app-icon">I</div>
+                <div class="lab"><b>Instagram</b> · paused for the next 26 min</div>
+              </div>
+
+              <h1 class="block-h">You were <em>almost there.</em></h1>
+
+              <div class="block-route">
+                <div class="lab">Your route</div>
+                <div class="task">Finish design proposal — section 2.</div>
+                <div class="way">"Open the document and write one sentence."</div>
+              </div>
+
+              <div class="block-actions">
+                <button class="btn btn-primary btn-block" style="height:58px;">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 12c0-4.97 4.03-9 9-9 2.5 0 4.76 1.02 6.4 2.66M21 12c0 4.97-4.03 9-9 9-2.5 0-4.76-1.02-6.4-2.66"/><path d="M19 3v4h-4M5 21v-4h4"/></svg>
+                  Reroute back to focus
+                </button>
+                <button class="btn btn-block" style="background:transparent;color:var(--text-2);font-weight:500;font-size:14px;height:46px;">Unlock for 3 minutes →</button>
+                <div class="block-meta">26:14 left · already rerouted 3× today</div>
+              </div>
+            </div>
+          </div>
+          <div class="home"></div>
+        </div>
+        <div class="cap"><span class="n">18</span><span class="t">Demo Blocking</span><span class="s">— full overlay</span></div>
+        <p class="note">Instead of "BLOCKED" in red, a <b>tiny lock dropped onto the dimmed app icon</b>. The headline <em>"You were almost there"</em> reframes interruption as proximity to your goal. The "3× today" footnote turns previous returns into quiet evidence.</p>
+      </div>
+
+      <div class="cell" style="width:600px;align-self:flex-start;padding-top:32px;">
+        <h3 style="font-family:'Fraunces',serif;font-weight:400;font-size:26px;letter-spacing:-0.02em;color:var(--cream);margin:0;line-height:1.2;">Block screens always feel hostile. This one shouldn't.</h3>
+        <p style="font-family:'DM Sans';font-size:14px;color:var(--text-2);line-height:1.7;margin:14px 0 0;">
+          The hardest constraint of this screen: it appears at the worst possible moment — the user wanted Instagram, badly, right now. Most apps respond with red, capital letters, a stop sign. Reroute responds with the same warm aurora, the user's own intention quoted back, and a button that's a verb (<em style="color:var(--cream);font-style:italic;">reroute</em>) instead of a refusal (<em style="color:var(--cream);font-style:italic;">go back</em>).
+        </p>
+        <div style="margin-top:22px;padding:18px;border-radius:14px;background:rgba(244,162,97,0.06);border:1px dashed rgba(244,162,97,0.3);">
+          <div style="font-family:'DM Sans';font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--warning);">The escape hatch matters</div>
+          <p style="font-family:'DM Sans';font-size:13px;color:var(--text-2);margin:8px 0 0;line-height:1.6;"><em style="color:var(--cream);font-style:italic;">"Unlock for 3 minutes"</em> is always available. A blocker that can't be opened isn't gentle — it's prison. The product trusts the user to take the break and come back.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ LIGHT-MODE PAIR ═══════ -->
+  <section style="margin-bottom:64px;">
+    <div class="cap" style="margin-bottom:24px;"><span class="n">06</span><span class="t">Light mode</span><span class="s">— Home &amp; Active Session, paired</span></div>
+    <div class="row tight">
+      <!-- Light home -->
+      <div class="cell">
+        <div class="phone light">
+          <div class="status">
+            <div class="notch"></div>
+            <span>9:41</span>
+            <span class="icons">
+              <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="0.6"/><rect x="4.4" y="5" width="3" height="6" rx="0.6"/><rect x="8.8" y="2.5" width="3" height="8.5" rx="0.6"/><rect x="13.2" y="0" width="3" height="11" rx="0.6"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><path d="M8 2.6c2.2 0 4.2.9 5.6 2.3l1-1A8.8 8.8 0 0 0 8 1a8.8 8.8 0 0 0-6.6 2.9l1 1A7.7 7.7 0 0 1 8 2.6z"/><path d="M8 6.1c1.3 0 2.4.5 3.3 1.4l1-1A6.3 6.3 0 0 0 8 4.6a6.3 6.3 0 0 0-4.3 1.9l1 1A4.5 4.5 0 0 1 8 6.1z"/><circle cx="8" cy="9.4" r="1.3"/></svg>
+              <svg width="25" height="11" viewBox="0 0 25 11" fill="none"><rect x="0.5" y="0.5" width="21" height="10" rx="2.5" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="18" height="7" rx="1.4" fill="currentColor"/><path d="M23 4v3c.7-.3 1.2-1 1.2-1.5 0-.5-.5-1.2-1.2-1.5z" fill="currentColor" opacity="0.5"/></svg>
+            </span>
+          </div>
+          <div class="body">
+            <div class="s-light-home">
+              <div class="nav">
+                <span class="greet">Tuesday morning, Sam</span>
+                <span class="av"></span>
+              </div>
+              <div class="scroll">
+                <h1>What are we<br/><em>protecting today?</em></h1>
+
+                <div class="l-route">
+                  <div class="lab">Today's Route</div>
+                  <div class="t">Finish the design proposal — section 2.</div>
+                  <div class="meta">
+                    <span class="l-pill">Writing</span>
+                    <span class="l-pill cream">45 min</span>
+                  </div>
+                </div>
+
+                <div style="display:flex;flex-direction:column;gap:10px;">
+                  <div class="l-cta">
+                    <span style="display:flex;align-items:center;gap:10px;">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M3 12c0-4.97 4.03-9 9-9 2.5 0 4.76 1.02 6.4 2.66M21 12c0 4.97-4.03 9-9 9-2.5 0-4.76-1.02-6.4-2.66"/><path d="M19 3v4h-4M5 21v-4h4"/></svg>
+                      Start focus session
+                    </span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
+                  </div>
+                  <div class="l-cta-2">
+                    <span style="display:flex;align-items:center;gap:10px;color:var(--light-text-2);">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                      Start from routine
+                    </span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"/></svg>
+                  </div>
+                </div>
+
+                <div style="display:flex;flex-direction:column;gap:8px;">
+                  <span style="font-family:'DM Sans';font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--light-text-2);padding-left:4px;">Today so far</span>
+                  <div class="l-stats">
+                    <div class="l-stat"><div class="v">2</div><div class="l">sessions</div></div>
+                    <div class="l-stat"><div class="v">38<span style="font-size:14px;color:var(--light-text-2);font-family:'DM Sans';">m</span></div><div class="l">focused</div></div>
+                    <div class="l-stat"><div class="v" style="color:var(--primary);">4</div><div class="l">returned</div></div>
+                  </div>
+                </div>
+
+                <div class="l-insight">
+                  <div class="l-leaf">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M11 20A7 7 0 0 1 4 13V4h9a7 7 0 0 1 7 7v9h-9z"/><path d="M4 4l16 16"/></svg>
+                  </div>
+                  <div>
+                    <div style="font-family:'DM Sans';font-size:10px;letter-spacing:0.16em;text-transform:uppercase;color:var(--primary-dark);">Pattern noticed</div>
+                    <div style="font-family:'Fraunces',serif;font-size:15px;line-height:1.4;color:var(--light-text);margin-top:4px;">Your strongest sessions this week were <em style="font-style:italic;">20–25 minutes</em>. Try a shorter block today?</div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="height:78px;padding:8px 18px 24px;background:rgba(255,255,255,0.85);backdrop-filter:blur(20px);border-top:1px solid rgba(226,221,216,0.7);display:grid;grid-template-columns:repeat(4,1fr);gap:4px;">
+                <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--primary-dark);">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a2 2 0 0 1-2 2h-4v-7h-6v7H5a2 2 0 0 1-2-2v-9z"/></svg>
+                  <span style="font-family:'DM Sans';font-size:10px;font-weight:600;">Home</span>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#A09DAE;">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+                  <span style="font-family:'DM Sans';font-size:10px;font-weight:500;">Routines</span>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#A09DAE;">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/></svg>
+                  <span style="font-family:'DM Sans';font-size:10px;font-weight:500;">Insights</span>
+                </div>
+                <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#A09DAE;">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="12" r="9"/></svg>
+                  <span style="font-family:'DM Sans';font-size:10px;font-weight:500;">Settings</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="home"></div>
+        </div>
+        <div class="cap"><span class="n">03</span><span class="t">Home (light)</span><span class="s">— warm cream</span></div>
+        <p class="note">Light mode keeps the same vocabulary — display serif headline, "Today's Route" card, three-up stat strip — on cream paper. The label changes from <em>"reroutes"</em> to <em>"returned"</em> to land softer in daylight.</p>
+      </div>
+
+      <!-- Light active -->
+      <div class="cell">
+        <div class="phone light">
+          <div class="status">
+            <div class="notch"></div>
+            <span>9:41</span>
+            <span class="icons">
+              <svg width="17" height="11" viewBox="0 0 17 11" fill="currentColor"><rect x="0" y="7" width="3" height="4" rx="0.6"/><rect x="4.4" y="5" width="3" height="6" rx="0.6"/><rect x="8.8" y="2.5" width="3" height="8.5" rx="0.6"/><rect x="13.2" y="0" width="3" height="11" rx="0.6"/></svg>
+              <svg width="16" height="11" viewBox="0 0 16 11" fill="currentColor"><path d="M8 2.6c2.2 0 4.2.9 5.6 2.3l1-1A8.8 8.8 0 0 0 8 1a8.8 8.8 0 0 0-6.6 2.9l1 1A7.7 7.7 0 0 1 8 2.6z"/><path d="M8 6.1c1.3 0 2.4.5 3.3 1.4l1-1A6.3 6.3 0 0 0 8 4.6a6.3 6.3 0 0 0-4.3 1.9l1 1A4.5 4.5 0 0 1 8 6.1z"/><circle cx="8" cy="9.4" r="1.3"/></svg>
+              <svg width="25" height="11" viewBox="0 0 25 11" fill="none"><rect x="0.5" y="0.5" width="21" height="10" rx="2.5" stroke="currentColor" stroke-opacity="0.4"/><rect x="2" y="2" width="18" height="7" rx="1.4" fill="currentColor"/><path d="M23 4v3c.7-.3 1.2-1 1.2-1.5 0-.5-.5-1.2-1.2-1.5z" fill="currentColor" opacity="0.5"/></svg>
+            </span>
+          </div>
+          <div class="body">
+            <div style="flex:1;display:flex;flex-direction:column;background:radial-gradient(ellipse 80% 50% at 50% 30%,rgba(124,111,205,0.14) 0%,rgba(124,111,205,0) 60%),var(--light-bg);">
+              <div style="padding:16px 28px 0;display:flex;justify-content:space-between;align-items:center;">
+                <span style="font-family:'DM Sans';font-size:12px;color:var(--primary-dark);letter-spacing:0.08em;text-transform:uppercase;display:inline-flex;align-items:center;gap:8px;">
+                  <span style="width:6px;height:6px;border-radius:999px;background:var(--primary);"></span>
+                  Focus session
+                </span>
+                <span style="font-family:'DM Sans';font-size:12px;color:var(--light-text-2);">9:41 → 10:26</span>
+              </div>
+              <div style="flex:1;display:flex;align-items:center;justify-content:center;position:relative;">
+                <svg width="320" height="320" viewBox="0 0 340 340">
+                  <circle cx="170" cy="170" r="160" fill="none" stroke="rgba(124,111,205,0.12)" stroke-width="1"/>
+                  <circle cx="170" cy="170" r="140" fill="none" stroke="rgba(124,111,205,0.18)" stroke-width="1" stroke-dasharray="2 6"/>
+                  <circle cx="170" cy="170" r="120" fill="none" stroke="rgba(28,28,46,0.1)" stroke-width="2"/>
+                  <circle cx="170" cy="170" r="120" fill="none" stroke="url(#g3)" stroke-width="3"
+                    stroke-dasharray="753.98" stroke-dashoffset="437.31" stroke-linecap="round"
+                    transform="rotate(-90 170 170)"/>
+                  <g transform="rotate(-90 170 170)">
+                    <circle cx="170" cy="50" r="4" fill="#C9A57E" transform="rotate(60 170 170)"/>
+                    <circle cx="170" cy="50" r="4" fill="#C9A57E" transform="rotate(110 170 170)"/>
+                    <circle cx="170" cy="50" r="4" fill="#C9A57E" transform="rotate(140 170 170)"/>
+                  </g>
+                  <defs>
+                    <linearGradient id="g3" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stop-color="#A99FE0"/>
+                      <stop offset="100%" stop-color="#5D52A8"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px;width:240px;">
+                  <span style="font-family:'DM Sans';font-size:11px;letter-spacing:0.18em;text-transform:uppercase;color:var(--primary-dark);">26 of 45 min remain</span>
+                  <div style="font-family:'Fraunces',serif;font-weight:300;font-size:84px;line-height:1;letter-spacing:-0.04em;color:var(--light-text);font-feature-settings:'tnum';margin-top:4px;">26:14</div>
+                  <div style="font-family:'Fraunces',serif;font-style:italic;font-size:15px;color:var(--light-text-2);margin-top:6px;line-height:1.35;">"Finish design proposal — section 2"</div>
+                </div>
+              </div>
+              <div style="margin:0 28px 16px;padding:18px 22px;border-radius:22px;background:linear-gradient(180deg,#FFFFFF 0%,#F8F3ED 100%);border:1px solid #E8E1D7;">
+                <div style="font-family:'DM Sans';font-size:10px;letter-spacing:0.18em;text-transform:uppercase;color:#8a6940;">Your way back</div>
+                <div style="font-family:'Fraunces',serif;font-style:italic;font-size:18px;color:var(--light-text);margin-top:6px;line-height:1.4;">Open the document and write one sentence.</div>
+              </div>
+              <div style="padding:0 28px 28px;display:grid;grid-template-columns:1fr auto auto;gap:10px;">
+                <button style="height:56px;border-radius:18px;background:rgba(244,162,97,0.14);color:#B7651F;border:1px solid rgba(244,162,97,0.4);font-family:'Nunito';font-weight:600;font-size:15px;display:inline-flex;align-items:center;justify-content:center;gap:8px;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 9v4M12 17h.01"/></svg>
+                  I drifted
+                </button>
+                <div style="width:56px;height:56px;border-radius:50%;background:#fff;border:1px solid #E8E1D7;display:grid;place-items:center;color:var(--light-text);">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 5v14M16 5v14"/></svg>
+                </div>
+                <div style="width:56px;height:56px;border-radius:50%;background:#fff;border:1px solid #E8E1D7;display:grid;place-items:center;color:var(--light-text);">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="home"></div>
+        </div>
+        <div class="cap"><span class="n">09</span><span class="t">Active Session (light)</span><span class="s">— same shape, daylight palette</span></div>
+        <p class="note">The system holds together: same ring, same return marks (now in <b>warm</b> instead of cream), same italic task line. Drift turns terracotta in daylight where it was amber at night — context-appropriate warmth.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ FOOTER ═══════ -->
+  <footer style="border-top:1px solid #2a2640;padding-top:32px;margin-top:32px;display:grid;grid-template-columns:1fr auto;gap:48px;align-items:start;">
+    <div>
+      <span class="num" style="font-family:'DM Sans';font-size:13px;letter-spacing:0.2em;color:var(--primary-light);text-transform:uppercase;">Recap of changes</span>
+      <ul style="font-family:'DM Sans';font-size:14px;color:var(--text-2);line-height:1.8;margin:14px 0 0;padding:0 0 0 18px;max-width:760px;">
+        <li>Display serif (Fraunces) introduced for emotional headlines — kept body type as Nunito + DM Sans for legibility</li>
+        <li>Signature <em style="color:var(--cream);font-style:italic;">"breathing aurora"</em> motif appears on Splash, Active Session, and Demo Block — visual continuity across the calmest screens</li>
+        <li>Active Session ring carries past reroutes as cream dots — turning the unique metric into a visible, accumulating object</li>
+        <li>Drift screen leads with a route diagram — drift (orange dotted) curving back to the path (cream) — making the brand metaphor literal</li>
+        <li>End Session replaces the stat grid with a session-shape timeline — every drift visible, every return brighter</li>
+        <li>Demo Block reframes <em style="color:var(--cream);font-style:italic;">"BLOCKED"</em> as <em style="color:var(--cream);font-style:italic;">"You were almost there"</em> — proximity, not refusal</li>
+        <li>Light-mode pair shows the system breathing in daylight — same shapes, warmer accent (terracotta, warm gold)</li>
+        <li>Subtle film grain across all hero screens — the warmth the brief asked for</li>
+      </ul>
+    </div>
+    <div style="font-family:'DM Sans';font-size:12px;color:var(--text-3);text-align:right;">
+      Reroute · v2 hero pass<br/>
+      <span style="color:var(--text-2);">5 hero screens redrawn · 2 light-mode shots · 1 type addition</span>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>

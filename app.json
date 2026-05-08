@@ -1,0 +1,61 @@
+{
+  "expo": {
+    "name": "Reroute",
+    "slug": "reroute",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#F5F0EB"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.reroute.app",
+      "buildNumber": "1",
+      "infoPlist": {
+        "NSUserTrackingUsageDescription": "Reroute does not use tracking. This permission is not requested.",
+        "UIBackgroundModes": ["fetch", "remote-notification"],
+        "ITSAppUsesNonExemptEncryption": false
+      },
+      "entitlements": {
+        "com.apple.developer.family-controls": true
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#F5F0EB"
+      },
+      "package": "com.reroute.app",
+      "versionCode": 1,
+      "permissions": [
+        "PACKAGE_USAGE_STATS",
+        "BIND_ACCESSIBILITY_SERVICE",
+        "FOREGROUND_SERVICE",
+        "RECEIVE_BOOT_COMPLETED",
+        "POST_NOTIFICATIONS"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-splash-screen",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#7C6FCD"
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "c180e854-f603-4f55-b205-17634c9605b7"
+      }
+    }
+  }
+}

@@ -1,0 +1,845 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Reroute — Mobile App Design</title>
+<meta name="viewport" content="width=1640" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #7C6FCD;
+    --primary-light: #A99FE0;
+    --primary-dark: #5D52A8;
+
+    /* dark theme (presentation default) */
+    --bg: #1A1828;
+    --bg-page: #0F0E1A;
+    --surface: #252140;
+    --surface-alt: #2E2A4A;
+    --surface-hi: #322E54;
+    --text: #E8E4F0;
+    --text-2: #9B97B0;
+    --text-3: #6A6680;
+    --border: #3A3658;
+    --cream: #F4ECDF;
+    --warm: #C9A57E;
+
+    --success: #7DD3A6;
+    --warning: #F4A261;
+    --danger: #E76F51;
+
+    --r-sm: 10px;
+    --r-md: 14px;
+    --r-lg: 20px;
+    --r-xl: 28px;
+  }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg-page);
+    color: var(--text);
+    font-family: 'Nunito', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* ───────── Page chrome ───────── */
+  .page {
+    width: 1640px;
+    margin: 0 auto;
+    padding: 96px 80px 160px;
+    box-sizing: border-box;
+  }
+
+  .masthead {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 48px;
+    align-items: end;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 40px;
+    margin-bottom: 80px;
+  }
+  .mast-logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: 'Nunito';
+    font-weight: 800;
+    font-size: 28px;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .mast-logo .mark {
+    width: 44px; height: 44px; border-radius: 14px;
+    background:
+      radial-gradient(circle at 30% 30%, #A99FE0 0%, var(--primary) 55%, var(--primary-dark) 100%);
+    display: grid; place-items: center;
+    box-shadow: 0 8px 24px -8px rgba(124,111,205,0.55);
+  }
+  .mast-meta { color: var(--text-2); font-size: 15px; }
+  .mast-meta b { color: var(--text); font-weight: 600; }
+  .mast-tag {
+    color: var(--text-2); font-size: 14px; text-align: right;
+    font-family: 'DM Sans'; letter-spacing: 0.01em;
+  }
+  .mast-tag b { color: var(--cream); font-weight: 500; display: block; font-size: 18px; margin-bottom: 2px; }
+
+  /* ───────── Section dividers (flow rows) ───────── */
+  .flow {
+    margin-bottom: 96px;
+  }
+  .flow-head {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 24px;
+    align-items: start;
+    margin-bottom: 36px;
+    padding-bottom: 24px;
+    border-bottom: 1px dashed rgba(232,228,240,0.12);
+  }
+  .flow-num {
+    font-family: 'DM Sans';
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--primary-light);
+    letter-spacing: 0.18em;
+    padding-top: 12px;
+    text-transform: uppercase;
+  }
+  .flow-title {
+    font-family: 'Nunito';
+    font-weight: 700;
+    font-size: 32px;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin: 0 0 6px;
+  }
+  .flow-sub {
+    font-family: 'DM Sans';
+    color: var(--text-2);
+    font-size: 15px;
+    max-width: 700px;
+    line-height: 1.55;
+    margin: 0;
+  }
+
+  .frames {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 56px 36px;
+  }
+  .frame-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    width: 375px;
+  }
+  .frame-cap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'DM Sans';
+    font-size: 13px;
+    color: var(--text-2);
+    letter-spacing: 0.04em;
+    padding-left: 4px;
+  }
+  .frame-cap .num {
+    width: 24px; height: 24px; border-radius: 8px;
+    background: rgba(124,111,205,0.15);
+    color: var(--primary-light);
+    display: grid; place-items: center;
+    font-weight: 600;
+    font-size: 12px;
+  }
+  .frame-cap .name {
+    color: var(--text);
+    font-weight: 500;
+    font-size: 14px;
+  }
+  .frame-cap .tag {
+    color: var(--text-3);
+    font-size: 12px;
+  }
+
+  /* ───────── Phone frame ───────── */
+  .phone {
+    width: 375px;
+    height: 812px;
+    border-radius: 48px;
+    background: var(--bg);
+    overflow: hidden;
+    position: relative;
+    box-shadow:
+      0 0 0 8px #0a0916,
+      0 0 0 9px #2a2640,
+      0 30px 60px -20px rgba(0,0,0,0.6),
+      0 8px 24px -8px rgba(124,111,205,0.18);
+    display: flex;
+    flex-direction: column;
+    isolation: isolate;
+  }
+  .phone.light {
+    background: #F5F0EB;
+    color: #1C1C2E;
+  }
+
+  /* status bar */
+  .status {
+    height: 44px;
+    padding: 0 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'DM Sans';
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--text);
+    flex: 0 0 auto;
+    position: relative;
+    z-index: 5;
+  }
+  .phone.light .status { color: #1C1C2E; }
+  .status .right { display: flex; gap: 6px; align-items: center; }
+  .status .notch {
+    position: absolute;
+    top: 11px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120px;
+    height: 26px;
+    background: #050410;
+    border-radius: 14px;
+  }
+  .phone.light .status .notch { background: #1C1C2E; }
+
+  /* home indicator */
+  .home-ind {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 134px;
+    height: 5px;
+    border-radius: 3px;
+    background: rgba(232,228,240,0.4);
+    z-index: 50;
+  }
+  .phone.light .home-ind { background: rgba(28,28,46,0.35); }
+
+  /* generic body */
+  .body {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Tab bar */
+  .tabbar {
+    height: 84px;
+    padding: 10px 18px 28px;
+    background: rgba(37,33,64,0.85);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(58,54,88,0.6);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 4px;
+    flex: 0 0 auto;
+  }
+  .phone.light .tabbar {
+    background: rgba(245,240,235,0.85);
+    border-top-color: rgba(226,221,216,0.8);
+  }
+  .tab {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 4px;
+    color: var(--text-3);
+    font-family: 'DM Sans';
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .tab.active { color: var(--primary-light); }
+  .phone.light .tab { color: #A09DAE; }
+  .phone.light .tab.active { color: var(--primary-dark); }
+  .tab svg { display: block; }
+
+  /* common card */
+  .card {
+    background: var(--surface);
+    border-radius: var(--r-lg);
+    padding: 20px;
+    border: 1px solid rgba(58,54,88,0.5);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.03) inset,
+      0 8px 24px -12px rgba(0,0,0,0.5);
+  }
+  .phone.light .card {
+    background: #FFFFFF;
+    border: 1px solid rgba(226,221,216,0.7);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.6) inset,
+      0 4px 14px -8px rgba(28,28,46,0.12);
+  }
+
+  /* common buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    height: 56px;
+    border-radius: 18px;
+    font-family: 'Nunito';
+    font-weight: 600;
+    font-size: 16px;
+    padding: 0 22px;
+    border: none;
+    cursor: default;
+  }
+  .btn-primary {
+    background: var(--primary);
+    color: #fff;
+    box-shadow: 0 8px 20px -8px rgba(124,111,205,0.55);
+  }
+  .btn-secondary {
+    background: var(--surface-alt);
+    color: var(--text);
+    border: 1px solid rgba(58,54,88,0.7);
+  }
+  .phone.light .btn-secondary { background: #ECE7E1; color: #1C1C2E; border-color: rgba(226,221,216,0.9); }
+  .btn-text {
+    background: transparent;
+    color: var(--primary-light);
+    height: 44px;
+  }
+  .phone.light .btn-text { color: var(--primary-dark); }
+  .btn-block { display: flex; width: 100%; }
+
+  /* utils */
+  .h1 { font-size: 28px; line-height: 1.2; font-weight: 700; letter-spacing: -0.02em; margin: 0; }
+  .h2 { font-size: 22px; line-height: 1.25; font-weight: 700; letter-spacing: -0.01em; margin: 0; }
+  .h3 { font-size: 18px; line-height: 1.3; font-weight: 600; margin: 0; }
+  .body-text { font-size: 15px; line-height: 1.5; color: var(--text-2); margin: 0; font-family: 'DM Sans'; }
+  .phone.light .body-text { color: #6B6880; }
+  .label { font-family: 'DM Sans'; font-size: 12px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-3); }
+  .phone.light .label { color: #A09DAE; }
+  .mono { font-family: 'DM Sans'; font-feature-settings: "tnum"; }
+
+  .scroll {
+    flex: 1;
+    overflow: hidden;
+    padding: 16px 24px 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .scroll-pad-top { padding-top: 8px; }
+
+  /* nav bar */
+  .nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 24px 8px;
+    flex: 0 0 auto;
+  }
+  .nav-icon {
+    width: 38px; height: 38px; border-radius: 12px;
+    background: rgba(58,54,88,0.5);
+    display: grid; place-items: center;
+    color: var(--text);
+  }
+  .phone.light .nav-icon { background: rgba(226,221,216,0.7); color: #1C1C2E; }
+
+  /* chips */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 14px;
+    border-radius: 999px;
+    background: var(--surface-alt);
+    color: var(--text);
+    font-family: 'DM Sans';
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid transparent;
+  }
+  .phone.light .chip { background: #ECE7E1; color: #1C1C2E; }
+  .chip.active {
+    background: rgba(124,111,205,0.18);
+    border-color: rgba(169,159,224,0.5);
+    color: var(--primary-light);
+  }
+  .phone.light .chip.active {
+    background: rgba(124,111,205,0.12);
+    border-color: rgba(124,111,205,0.4);
+    color: var(--primary-dark);
+  }
+
+  /* dot pagination */
+  .dots { display: flex; gap: 6px; align-items: center; }
+  .dot { width: 6px; height: 6px; border-radius: 999px; background: rgba(232,228,240,0.25); }
+  .dot.active { width: 22px; background: var(--primary-light); }
+
+  /* misc tiny */
+  .row { display: flex; align-items: center; }
+  .col { display: flex; flex-direction: column; }
+  .gap-4 { gap: 4px; } .gap-6 { gap: 6px; } .gap-8 { gap: 8px; }
+  .gap-10 { gap: 10px; } .gap-12 { gap: 12px; } .gap-14 { gap: 14px; } .gap-16 { gap: 16px; }
+  .gap-20 { gap: 20px; } .gap-24 { gap: 24px; }
+  .between { justify-content: space-between; }
+  .center { justify-content: center; }
+  .grow { flex: 1; }
+
+  /* ───── 1. Splash ───── */
+  .splash {
+    flex: 1;
+    background:
+      radial-gradient(circle at 50% 35%, rgba(124,111,205,0.35) 0%, rgba(124,111,205,0) 50%),
+      var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding-bottom: 100px;
+  }
+  .splash-mark {
+    width: 92px; height: 92px;
+    border-radius: 28px;
+    background:
+      radial-gradient(circle at 30% 30%, #A99FE0 0%, var(--primary) 55%, var(--primary-dark) 100%);
+    display: grid; place-items: center;
+    box-shadow: 0 30px 60px -20px rgba(124,111,205,0.6);
+  }
+  .splash-name {
+    font-family: 'Nunito';
+    font-weight: 800;
+    font-size: 36px;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin: 0;
+  }
+  .splash-tag {
+    font-family: 'DM Sans';
+    font-size: 15px;
+    color: var(--text-2);
+    margin: 0;
+    letter-spacing: 0.01em;
+  }
+  .splash-loader {
+    margin-top: 60px;
+    display: flex;
+    gap: 6px;
+  }
+  .splash-loader span {
+    width: 6px; height: 6px; border-radius: 999px;
+    background: rgba(169,159,224,0.5);
+    animation: pulse 1.4s ease-in-out infinite;
+  }
+  .splash-loader span:nth-child(2) { animation-delay: 0.2s; }
+  .splash-loader span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes pulse { 0%,80%,100% { opacity: 0.3; transform: scale(0.8); } 40% { opacity: 1; transform: scale(1.1); } }
+
+  /* ───── 2. Onboarding ───── */
+  .onb-art {
+    flex: 1;
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+  }
+  .onb-emoji {
+    font-size: 92px;
+    filter: drop-shadow(0 12px 24px rgba(124,111,205,0.35));
+  }
+  .onb-orbit {
+    position: absolute;
+    border: 1px dashed rgba(169,159,224,0.25);
+    border-radius: 999px;
+  }
+  .onb-orbit.o1 { width: 220px; height: 220px; }
+  .onb-orbit.o2 { width: 320px; height: 320px; opacity: 0.6; }
+  .onb-orbit.o3 { width: 420px; height: 420px; opacity: 0.3; }
+
+  /* ───── 3. Home ───── */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .stat {
+    background: var(--surface-alt);
+    border-radius: 14px;
+    padding: 14px 16px;
+  }
+  .stat .v {
+    font-family: 'Nunito';
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--text);
+  }
+  .stat .l {
+    font-family: 'DM Sans';
+    font-size: 12px;
+    color: var(--text-2);
+    margin-top: 2px;
+  }
+
+  /* ───── timer ───── */
+  .timer-display {
+    font-family: 'Nunito';
+    font-weight: 200;
+    font-size: 84px;
+    line-height: 1;
+    letter-spacing: -3px;
+    color: var(--text);
+    font-feature-settings: "tnum";
+  }
+  .ring {
+    width: 280px; height: 280px;
+    margin: 8px auto 0;
+    position: relative;
+    display: grid; place-items: center;
+  }
+  .ring svg { position: absolute; top: 0; left: 0; transform: rotate(-90deg); }
+  .ring-center { position: relative; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 8px; }
+
+  /* progress bar */
+  .progbar { height: 4px; background: rgba(58,54,88,0.6); border-radius: 999px; overflow: hidden; }
+  .progbar > i { display: block; height: 100%; background: var(--primary); border-radius: 999px; }
+
+  /* segmented duration */
+  .seg {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .seg button {
+    background: var(--surface-alt);
+    border: 1px solid transparent;
+    color: var(--text);
+    font-family: 'DM Sans';
+    font-weight: 600;
+    font-size: 14px;
+    border-radius: 14px;
+    padding: 14px 0;
+    text-align: center;
+  }
+  .seg button.on {
+    background: rgba(124,111,205,0.18);
+    border-color: rgba(169,159,224,0.5);
+    color: var(--primary-light);
+  }
+
+  /* bar chart */
+  .bars {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    align-items: end;
+    height: 120px;
+  }
+  .bars .b {
+    background: linear-gradient(180deg, var(--primary-light) 0%, var(--primary) 100%);
+    border-radius: 6px 6px 2px 2px;
+    width: 100%;
+    position: relative;
+  }
+  .bars .b.dim { background: rgba(58,54,88,0.7); }
+  .bar-labels {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .bar-labels span {
+    font-family: 'DM Sans';
+    font-size: 11px;
+    color: var(--text-3);
+    text-align: center;
+  }
+
+  /* tag pill (tiny) */
+  .pill-tag {
+    font-family: 'DM Sans';
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(125,211,166,0.16);
+    color: var(--success);
+    text-transform: uppercase;
+  }
+  .pill-tag.warm { background: rgba(244,162,97,0.16); color: var(--warning); }
+  .pill-tag.cream { background: rgba(244,236,223,0.1); color: var(--cream); }
+  .pill-tag.lav { background: rgba(124,111,205,0.18); color: var(--primary-light); }
+
+  /* list rows */
+  .list-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(58,54,88,0.5);
+  }
+  .phone.light .list-row { border-bottom-color: rgba(226,221,216,0.7); }
+  .list-row:last-child { border-bottom: none; }
+  .list-icon {
+    width: 40px; height: 40px;
+    border-radius: 12px;
+    background: var(--surface-alt);
+    display: grid; place-items: center;
+    flex: 0 0 40px;
+  }
+  .phone.light .list-icon { background: #ECE7E1; }
+
+  /* settings section */
+  .set-sec { display: flex; flex-direction: column; }
+  .set-sec .label { padding: 18px 4px 8px; }
+  .set-sec .card { padding: 4px 18px; }
+  .set-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(58,54,88,0.5);
+  }
+  .phone.light .set-row { border-bottom-color: rgba(226,221,216,0.7); }
+  .set-row:last-child { border-bottom: none; }
+
+  /* toggle */
+  .toggle {
+    width: 44px; height: 26px; border-radius: 999px;
+    background: var(--surface-alt);
+    position: relative;
+    flex: 0 0 44px;
+  }
+  .toggle.on { background: var(--primary); }
+  .toggle::after {
+    content: ''; width: 22px; height: 22px; border-radius: 999px;
+    background: #fff; position: absolute; top: 2px; left: 2px;
+    transition: 0.2s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  }
+  .toggle.on::after { left: 20px; }
+
+  /* input */
+  .input {
+    background: var(--surface-alt);
+    border: 1px solid rgba(58,54,88,0.6);
+    border-radius: 16px;
+    padding: 16px 18px;
+    color: var(--text);
+    font-family: 'DM Sans';
+    font-size: 15px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  .input.lg {
+    font-family: 'Nunito';
+    font-size: 22px;
+    font-weight: 600;
+    padding: 22px;
+    line-height: 1.3;
+    min-height: 110px;
+    letter-spacing: -0.01em;
+  }
+  .phone.light .input { background: #FFFFFF; border-color: rgba(226,221,216,0.9); color: #1C1C2E; }
+
+  /* drift */
+  .drift-bg {
+    flex: 1;
+    background:
+      radial-gradient(circle at 50% 0%, rgba(244,236,223,0.08) 0%, rgba(244,236,223,0) 60%),
+      radial-gradient(circle at 50% 100%, rgba(124,111,205,0.18) 0%, rgba(124,111,205,0) 50%),
+      var(--bg);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* paywall */
+  .price-card {
+    border-radius: 20px;
+    border: 1.5px solid rgba(58,54,88,0.7);
+    padding: 18px;
+    background: var(--surface);
+    position: relative;
+  }
+  .price-card.featured {
+    border-color: var(--primary);
+    background:
+      linear-gradient(180deg, rgba(124,111,205,0.18) 0%, rgba(124,111,205,0.04) 100%),
+      var(--surface);
+  }
+
+  /* permission card */
+  .perm-row {
+    display: grid;
+    grid-template-columns: 48px 1fr auto;
+    gap: 14px;
+    padding: 18px 0;
+    align-items: start;
+    border-bottom: 1px solid rgba(58,54,88,0.5);
+  }
+  .perm-row:last-child { border-bottom: none; }
+
+  /* Demo blocking screen — full overlay */
+  .block-overlay {
+    position: relative;
+    flex: 1;
+    background:
+      radial-gradient(circle at 50% 30%, rgba(124,111,205,0.4) 0%, rgba(124,111,205,0) 50%),
+      var(--bg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 28px 80px;
+    text-align: center;
+    gap: 16px;
+  }
+
+  /* End session big number */
+  .big-num {
+    font-family: 'Nunito';
+    font-weight: 200;
+    font-size: 64px;
+    line-height: 1;
+    letter-spacing: -2px;
+    color: var(--text);
+  }
+
+  /* Privacy text */
+  .priv-section {
+    display: flex; flex-direction: column; gap: 8px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid rgba(58,54,88,0.4);
+  }
+  .priv-section:last-child { border: none; }
+
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ═══════════ MASTHEAD ═══════════ -->
+  <header class="masthead">
+    <div class="mast-logo">
+      <span class="mark">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+          <path d="M3 12c0-4.97 4.03-9 9-9 2.5 0 4.76 1.02 6.4 2.66M21 12c0 4.97-4.03 9-9 9-2.5 0-4.76-1.02-6.4-2.66" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+          <path d="M19 3v4h-4M5 21v-4h4" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </span>
+      Reroute
+    </div>
+    <div class="mast-meta">
+      Mobile app design · <b>18 screens</b> across <b>6 flows</b><br/>
+      iPhone · 375 × 812 · dark mode primary
+    </div>
+    <div class="mast-tag">
+      <b>Find your way back to focus.</b>
+      A calm, non-judgmental focus recovery app
+    </div>
+  </header>
+
+  <!-- ═══════════ FLOW 1 — ONBOARDING ═══════════ -->
+  <section class="flow">
+    <div class="flow-head">
+      <div class="flow-num">Flow 01</div>
+      <div>
+        <h2 class="flow-title">Onboarding</h2>
+        <p class="flow-sub">First impression. Calm, soft and quiet — no hustle copy. Five carousel slides plant the philosophy: one thing at a time, no guilt, private by default.</p>
+      </div>
+    </div>
+    <div class="frames" id="flow-1"></div>
+  </section>
+
+  <!-- ═══════════ FLOW 2 — MAIN TABS ═══════════ -->
+  <section class="flow">
+    <div class="flow-head">
+      <div class="flow-num">Flow 02</div>
+      <div>
+        <h2 class="flow-title">Main tabs</h2>
+        <p class="flow-sub">The four homes the user lives in. Home leads with intention not numbers; Routines, Insights and Settings stay sparse and breathable.</p>
+      </div>
+    </div>
+    <div class="frames" id="flow-2"></div>
+  </section>
+
+  <!-- ═══════════ FLOW 3 — SESSION ═══════════ -->
+  <section class="flow">
+    <div class="flow-head">
+      <div class="flow-num">Flow 03</div>
+      <div>
+        <h2 class="flow-title">Session flow</h2>
+        <p class="flow-sub">From setting today's intention through the active timer, the drift / reroute moment, an intentional unlock, and the end-of-session debrief. The reroute screen is the most important screen in the product — warm, never punishing.</p>
+      </div>
+    </div>
+    <div class="frames" id="flow-3"></div>
+  </section>
+
+  <!-- ═══════════ FLOW 4 — ROUTINE DETAIL ═══════════ -->
+  <section class="flow">
+    <div class="flow-head">
+      <div class="flow-num">Flow 04</div>
+      <div>
+        <h2 class="flow-title">Routine detail</h2>
+        <p class="flow-sub">View, edit and run a saved routine. Defaults for duration, intention template, blocked apps and active days, with a soft history strip.</p>
+      </div>
+    </div>
+    <div class="frames" id="flow-4"></div>
+  </section>
+
+  <!-- ═══════════ FLOW 5 — REPORTS & PAYWALL ═══════════ -->
+  <section class="flow">
+    <div class="flow-head">
+      <div class="flow-num">Flow 05</div>
+      <div>
+        <h2 class="flow-title">Reports &amp; paywall</h2>
+        <p class="flow-sub">Pro upsell stays honest — free is genuinely useful. Weekly Report is the headline pro feature; permissions onboarding is calm and explanatory.</p>
+      </div>
+    </div>
+    <div class="frames" id="flow-5"></div>
+  </section>
+
+  <!-- ═══════════ FLOW 6 — UTILITY ═══════════ -->
+  <section class="flow">
+    <div class="flow-head">
+      <div class="flow-num">Flow 06</div>
+      <div>
+        <h2 class="flow-title">Utility screens</h2>
+        <p class="flow-sub">The supporting cast. Privacy in plain English, and the demo blocking overlay that demonstrates how a real intercept feels.</p>
+      </div>
+    </div>
+    <div class="frames" id="flow-6"></div>
+  </section>
+
+</div>
+
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+<script type="text/babel" src="reroute-icons.jsx"></script>
+<script type="text/babel" src="reroute-frame.jsx"></script>
+<script type="text/babel" src="reroute-screens-1.jsx"></script>
+<script type="text/babel" src="reroute-screens-2.jsx"></script>
+<script type="text/babel" src="reroute-screens-3b.jsx"></script>
+<script type="text/babel" src="reroute-mount-b.jsx"></script>
+
+</body>
+</html>

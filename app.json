@@ -55,6 +55,7 @@
     "extra": {
       "eas": {
         "projectId": "ed42c8cd-1b58-477d-825f-183c87896c0b"
+        "owner": "havilah-labs"
       }
     }
   }
